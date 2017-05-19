@@ -11,7 +11,7 @@ using System.Media;
 using BrickBreaker;
 using BrickBreaker.Screens;
 namespace BrickBreaker
-{
+{//multiplayer gamescreen by Daniel Clarke fewgw
     public partial class GameScreenMulti : UserControl
     {
 
@@ -25,21 +25,32 @@ namespace BrickBreaker
         Boolean aKeyDown, sKeyDown, dKeyDown, wKeyDown, qKeyDown;
 
         #region Stefan and Jack's values
-        // Creates powerup list
-        List<PowerUp> powerUps = new List<PowerUp>();
-        List<PowerUp> activePowerUps = new List<PowerUp>();
 
-        int longPaddleCounter = 0;
+        List<PowerUp> powerUps = new List<PowerUp>();
+
+        Random randomNum = new Random();
+
+        int longPaddleTimer = 0;
+        int MagnetTimer = 0;
+        int floorTimer = 0;
+        int strongBallTimer = 0;
+        int shroomsTimer = 0;
+        int shroomsControlTimer = 0;
+        int blindfoldTimer = 0;
+        double pointsMultiplier = 1;
         bool longPaddle = false;
         bool isMagnet = false;
-        int isMagnetTimer = 0;
-        bool floor = false;
-        int floorTimer = 0;
+        bool isFloor = false;
+        bool isStrongball = false;
+        bool isShrooms = false;
+        bool isShroomsControls = false;
+        bool isBlindfold = false;
 
         Paddle floorPaddle;
 
         SolidBrush powerupBrush = new SolidBrush(Color.Green);
         SolidBrush floorBrush = new SolidBrush(Color.Cyan);
+
         #endregion
 
         // Game values
@@ -58,6 +69,9 @@ namespace BrickBreaker
         // list of all blocks
         List<Block> blocks1p = new List<Block>();
         List<Block> blocks2p = new List<Block>();
+
+        //list of all balls
+        List<Ball> balls = new List<Ball>();
 
         // Brushes
         SolidBrush paddleBrush = new SolidBrush(Color.White);
@@ -250,8 +264,8 @@ namespace BrickBreaker
         public void manuel()
         {
             gameTimer.Enabled = false;
+            DialogResult result = PauseScreen.Show("Return to the Main Menu?", "Yes", "No");
 
-            DialogResult result = PauseScreen.Show("Quit the Game?", "Testing", "Yes", "No");
 
             switch (result)
             {
@@ -263,13 +277,45 @@ namespace BrickBreaker
                     break;
 
                 case DialogResult.Yes:
-                    Application.Exit();
+                    MenuScreen ms = new MenuScreen();
+                    Form form = this.FindForm();
+
+                    form.Controls.Add(ms);
+                    form.Controls.Remove(this);
+
+                    ms.Location = new Point((form.Width - ms.Width) / 2, (form.Height - ms.Height) / 2);
                     break;
+
             }
         }
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
+            //swaps controls when shrooms is active for p1
+            if (isShroomsControls)
+            {
+                if (leftArrowDown && paddle.x < (this.Width - paddle.width))
+                {
+                    paddle.Move("right");
+                }
+                if (rightArrowDown && paddle.x > 0)
+                {
+                    paddle.Move("left");
+                }
+            }
+
+            if (isShroomsControls)//for p2
+            {
+                if (aKeyDown && paddle2.x < (this.Width - paddle2.width))
+                {
+                    paddle2.Move("right");
+                }
+                if (dKeyDown && paddle.x > 0)
+                {
+                    paddle2.Move("left");
+                }
+            }
+
             // Move the paddle for p1
             if (leftArrowDown && paddle.x > 0)
             {
@@ -292,49 +338,100 @@ namespace BrickBreaker
 
             #region Stefan and Jacks PowerUps
 
-            if (isMagnetTimer > 0 && isMagnet == true)
+            if (MagnetTimer > 0 && isMagnet == true)
             {
-                isMagnetTimer--;
+                MagnetTimer--;
             }
-            else if (isMagnetTimer <= 0 && isMagnet == true)
+            else if (MagnetTimer <= 0 && isMagnet == true)
             {
                 isMagnet = false;
             }
 
             if (longPaddle == true)
             {
-                longPaddleCounter++;
-                if (longPaddleCounter >= 14 && paddle.width > 80)
+                longPaddleTimer++;
+                if (longPaddleTimer >= 14 && paddle.width > 80)
                 {
-                    longPaddleCounter = 0;
+                    longPaddleTimer = 0;
                     paddle.x++;
                     paddle.width -= 2;
                 }
-                else if (paddle.width <= 80 && longPaddleCounter >= 14)
+                else if (paddle.width <= 80 && longPaddleTimer >= 14)
                 {
-                    longPaddleCounter = 0;
+                    longPaddleTimer = 0;
                     longPaddle = false;
                 }
             }
-
-            if (floor == true && floorTimer <= 0)
+            else if (longPaddle == true && paddle.width != 80)
             {
-                floor = false;
+                paddle.width = 80;
             }
-            else if (floor == true && floorTimer > 0)
+
+            if (isFloor == true && floorTimer <= 0)
+            {
+                isFloor = false;
+            }
+            else if (isFloor == true && floorTimer > 0)
             {
                 floorTimer--;
-                if (ball.PaddleCollision(floorPaddle, false, false, 100) == 0)
+                foreach (Ball ba in balls)
                 {
-                    floorTimer = 0;
+                    if (ba.PaddleCollision(floorPaddle, false, false, 100) == 0)
+                    {
+                        floorTimer = 0;
+                    }
                 }
+                CollidePowerUps(floorPaddle);
             }
+
+            if (strongBallTimer > 0 && isStrongball == true)
+            {
+                strongBallTimer--;
+            }
+            else if (strongBallTimer <= 0 && isStrongball == true)
+            {
+                isStrongball = false;
+
+                ballBrush.Color = Color.White;
+            }
+
+            if (shroomsTimer > 0 && isShrooms == true)
+            {
+                ballBrush.Color = Color.FromArgb(randomNum.Next(0, 255), randomNum.Next(0, 255), randomNum.Next(0, 255));
+                paddleBrush.Color = Color.FromArgb(randomNum.Next(0, 255), randomNum.Next(0, 255), randomNum.Next(0, 255));
+
+                if (shroomsControlTimer >= 80 && isShroomsControls == false)
+                {
+                    isShroomsControls = true;
+                }
+
+                shroomsControlTimer++;
+                shroomsTimer--;
+            }
+            else if (shroomsTimer <= 0 && isShrooms == true)
+            {
+                isShrooms = isShroomsControls = false;
+                paddleBrush.Color = ballBrush.Color = Color.White;
+
+            }
+
+            if (blindfoldTimer > 0 && isBlindfold == true)
+            {
+                blindfoldTimer--;
+            }
+            else if (blindfoldTimer <= 0 && isBlindfold == true)
+            {
+                isBlindfold = false;
+            }
+
 
             // Moves powerups
             MovePowerups(powerUps);
 
             // Check for collision with powerups and paddle
             CollidePowerUps(paddle);
+            CollidePowerUps(paddle2);
+
             #endregion
 
             // Moves ball
@@ -435,7 +532,7 @@ namespace BrickBreaker
 
         public void GameScreen_Paint(object sender, PaintEventArgs e)
         {
-            Image backImage = BrickBreaker.Properties.Resources.fadedBackground;
+            Image backImage = BrickBreaker.Properties.Resources.texture4;
 
             Rectangle backRect = new Rectangle((0 - 400) - paddle.x, 0, this.Width * 3, this.Height);
             e.Graphics.DrawImage(backImage, backRect);
@@ -458,7 +555,7 @@ namespace BrickBreaker
             // Draws Powerups
             DrawPowerups(e);
 
-            if (floor == true)
+            if (isFloor == true)
             {
                 e.Graphics.FillRectangle(floorBrush, floorPaddle.x, floorPaddle.y, floorPaddle.width, floorPaddle.height);
             }
@@ -469,13 +566,12 @@ namespace BrickBreaker
 
 
         #region Stefan and Jack's Powerup Methods
+
         public void GeneratePowerUp(int brickX, int brickY)
         {
-            Random n = new Random();
-
-            if (n.Next(0, 1) == 0)
+            if (randomNum.Next(0, 1) == 0)
             {
-                PowerUp p = new PowerUp(brickX, brickY, 20, 3, n.Next(0, 7));
+                PowerUp p = new PowerUp(brickX, brickY, 20, 3, randomNum.Next(0, 9));
                 powerUps.Add(p);
             }
         }
@@ -496,25 +592,72 @@ namespace BrickBreaker
             }
         }
 
-        public void CollidePowerUps(Paddle paddle)
+        public void CollidePowerUps(Paddle tempPaddle)
         {
             foreach (PowerUp p in powerUps)
             {
-                if (p.Collision(paddle) == true)
+                if (p.Collision(tempPaddle) == true)
                 {
+                    switch (p.type)
+                    {
+                        case 0:
+                            isMagnet = true;
+                            MagnetTimer = 900;
+                            break;
+                        case 1:
+                            paddle.width += 80;
+                            paddle.x -= 40;
+                            longPaddle = true;
+                            break;
+                        case 2:
+                            Ball tempBall = new Ball(paddle.x + paddle.width / 2, paddle.y, Form1.xSpeed, -Form1.ySpeed, 20);
+                            balls.Add(tempBall);
+                            break;
+                        case 3:
+                            isFloor = true;
+                            floorTimer = 800;
+                            break;
+                        case 4:
+                            lives++;
+                            break;
+                        case 5:
+                            pointsMultiplier += 0.1;
+                            break;
+                        case 6:
+                            strongBallTimer = 400;
+                            isStrongball = true;
+                            ballBrush.Color = Color.Orange;
+                            break;
+                        case 7:
+                            shroomsTimer = 600;
+                            isShrooms = true;
+                            break;
+                        case 8:
+                            blindfoldTimer = 400;
+                            isBlindfold = true;
+                            break;
+                    }
+
                     powerUps.Remove(p);
-                    activePowerUps.Add(p);
-                    break;
-                }
-                if (p.Collision(paddle2) == true)
-                {
-                    powerUps.Remove(p);
-                    activePowerUps.Add(p);
                     break;
                 }
             }
         }
 
+        public void ResetPowerups()
+        {
+            longPaddle = isFloor = isMagnet = isStrongball = isShrooms = isShroomsControls = isBlindfold = false;
+            MagnetTimer = floorTimer = strongBallTimer = shroomsTimer = shroomsControlTimer = blindfoldTimer = 0;
+            pointsMultiplier = 1;
+
+            paddle.width = 80;
+
+            paddleBrush.Color = Color.White;
+            ballBrush.Color = Color.White;
+
+            powerUps.Clear();
+        }
+        //change
         #endregion
     }
 }

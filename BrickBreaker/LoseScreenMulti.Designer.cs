@@ -49,7 +49,7 @@
             this.returnToMenuLabel.AutoSize = true;
             this.returnToMenuLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.returnToMenuLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.returnToMenuLabel.ForeColor = System.Drawing.Color.White;
+            this.returnToMenuLabel.ForeColor = System.Drawing.Color.Red;
             this.returnToMenuLabel.Location = new System.Drawing.Point(142, 373);
             this.returnToMenuLabel.Name = "returnToMenuLabel";
             this.returnToMenuLabel.Size = new System.Drawing.Size(149, 55);

@@ -70,7 +70,7 @@
             this.Controls.Add(this.hpLabelp2);
             this.DoubleBuffered = true;
             this.Name = "GameScreenMulti";
-            this.Size = new System.Drawing.Size(800, 550);
+            this.Size = new System.Drawing.Size(796, 550);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.GameScreen_Paint);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.GameScreenMulti_KeyUp);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.GameScreenMulti_PreviewKeyDown);

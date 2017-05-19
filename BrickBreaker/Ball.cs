@@ -43,7 +43,15 @@ namespace BrickBreaker
 
             if (blockRec.IntersectsWith(ballRec))
             {
+
+                //play sound
+
+                Form1.brickBounce.Stop();
+                Form1.brickBounce.Play();
+
+
                 if (x >= (b.x + b.width))
+
                     xSpeed = Math.Abs(xSpeed);
 
                 if ((x + size) <= b.x)
@@ -67,6 +75,9 @@ namespace BrickBreaker
 
             if (ballRec.IntersectsWith(paddleRec) && ticksSinceHit >= 10)
             {
+                //play sound
+                Form1.paddleBounce.Stop();
+                Form1.paddleBounce.Play();
 
                 Point intersect = intersectionRec.Location;
                 int intersectX = intersect.X;
@@ -92,13 +103,13 @@ namespace BrickBreaker
                     theta++;
 
                 //uses trig to calculate new x and y speeds
-                xSpeed = -Math.Cos(theta) * speed * 0.5;
-                ySpeed = -Math.Sqrt(speed - Math.Abs(xSpeed));
+                xSpeed = Math.Cos(theta) * speed * 0.5;
+                ySpeed = Math.Sqrt(speed - Math.Abs(xSpeed));
 
                 //prevents "speed slippage" by mathematically ensuring momentum will always be conserved
                 double diff = speed / Math.Sqrt(xSpeed * xSpeed + ySpeed * ySpeed);
-                xSpeed *= diff;
-                ySpeed *= diff;
+                xSpeed *= -diff;
+                ySpeed *= -diff;
                 
                 //returns 0 if collision occurs, resetting the number of ticks since the last collision
                 return 0;             
@@ -112,7 +123,11 @@ namespace BrickBreaker
         {
             // Collision with left wall
             if (x <= 0)
-            {   
+            {
+                //play sound
+                Form1.wallBounce.Stop();
+                Form1.wallBounce.Play();
+
                 xSpeed *= -1;
 
                 //corrects wall sticking glitch
@@ -121,7 +136,11 @@ namespace BrickBreaker
             }
             // Collision with right wall
             if (x >= (UC.Width - size))
-            {             
+            {
+                //play sound
+                Form1.wallBounce.Stop();
+                Form1.wallBounce.Play();
+
                 xSpeed *= -1;
 
                 //corrects wall sticking glitch
@@ -130,7 +149,11 @@ namespace BrickBreaker
             }
             // Collision with top wall
             if (y <= 2)
-            {   
+            {
+                //play sound
+                Form1.wallBounce.Stop();
+                Form1.wallBounce.Play();
+
                 ySpeed *= -1;
 
                 //corrects wall sticking glitch
@@ -145,6 +168,10 @@ namespace BrickBreaker
 
             if (y >= UC.Height)
             {
+                //play sound
+                Form1.gameOver.Stop();
+                Form1.gameOver.Play();
+
                 didCollide = true;
             }
 

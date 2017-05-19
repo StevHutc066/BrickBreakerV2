@@ -26,7 +26,7 @@ namespace BrickBreaker.Screens
                 Form form = this.FindForm();
 
                 form.Controls.Add(ms);
-                form.Controls.Remove(this);   
+                form.Controls.Remove(this);
 
                 ms.Location = new Point((form.Width - ms.Width) / 2, (form.Height - ms.Height) / 2);
             }
@@ -34,22 +34,16 @@ namespace BrickBreaker.Screens
 
         private void OnLoad()
         {
+            //outputs highscores in format: (Position). NAME level# score 
             for (int i = 0; i < Form1.highscoreList.Count; i++)
             {
-                if (i < 5)
+                if ((i + 1) >= 10)
                 {
-                    top5Output.Text += (i + 1) + ".  " + Form1.highscoreList[i].name + " " + Form1.highscoreList[i].level + " " + Form1.highscoreList[i].score + "\n";
+                    top10Output.Text += (i + 1) + ".  " + Form1.highscoreList[i].name + "   level " + Form1.highscoreList[i].level + "   " + Form1.highscoreList[i].score + "\n";
                 }
-                else if (i >= 5 && i < 10)
+                else
                 {
-                    if ((i + 1) == 10)
-                    {
-                        next5Output.Text += (i + 1) + ". " + Form1.highscoreList[i].name + " " + Form1.highscoreList[i].level + " " + Form1.highscoreList[i].score + "\n";
-                    }
-                    else
-                    {
-                        next5Output.Text += (i + 1) + ".  " + Form1.highscoreList[i].name + " " + Form1.highscoreList[i].level + " " + Form1.highscoreList[i].score + "\n";
-                    }
+                    top10Output.Text += (i + 1) + ".   " + Form1.highscoreList[i].name + "   level " + Form1.highscoreList[i].level + "   " + Form1.highscoreList[i].score + "\n";
                 }
             }
         }

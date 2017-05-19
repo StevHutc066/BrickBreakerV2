@@ -14,6 +14,8 @@ namespace BrickBreaker.Screens
 {
     public partial class PauseScreen : Form
     {
+        int index = 0;
+        int lastIndex = 0;
         public PauseScreen()
         {
             InitializeComponent();
@@ -26,22 +28,89 @@ namespace BrickBreaker.Screens
         {
             pause = new PauseScreen();
             pause.titleLabel.Text = Text;
-            pause.yesButton.Text = btnYes;
-            pause.noButton.Text = btnNo;
+            pause.yesLabel.Text = btnYes;
+            pause.noLabel.Text = btnNo;
             pause.ShowDialog();
             return result;
         }
 
-        private void yesButton_Click_1(object sender, EventArgs e)
+        private void PauseScreen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            result = DialogResult.Yes;
-            this.Close();
-        }
+            lastIndex = index;
+            Form form = this.FindForm();
 
-        private void noButton_Click_1(object sender, EventArgs e)
-        {
-            result = DialogResult.No;
-            this.Close();
+            switch (e.KeyCode)
+            {
+                case Keys.Left:
+                    {
+                        if (index != 0)
+                        {
+                            index--;
+                        }
+
+                        if (index == 0)
+                        {
+                            index = 2;
+                        }
+                        break;
+                    }
+
+                case Keys.Right:
+                    {
+                        if (index != 2)
+                        {
+                            index++;
+                        }
+
+                        else
+                        {
+                            index = 1;
+                        }
+                        break;
+                    }
+
+
+                //clicking on the screen with space key
+                case Keys.Space:
+                    switch (index)
+                    {
+                        //yes button
+
+                        case 1:
+                            result = DialogResult.No;
+                            this.Close();
+                            break;
+
+                        //no button
+                        case 2:
+                            result = DialogResult.Yes;
+                            this.Close();
+                            break;
+                    }
+                    break;
+            }
+
+            //set button to white if not clicked on
+            switch (lastIndex)
+            {
+                case 1:
+                    noLabel.ForeColor = Color.Black;
+                    break;
+                case 2:
+                    yesLabel.ForeColor = Color.Black;
+                    break;
+            }
+
+            //set selected button to red
+            switch (index)
+            {
+                case 1:
+                    noLabel.ForeColor = Color.Red;
+                    break;
+                case 2:
+                    yesLabel.ForeColor = Color.Red;
+                    break;
+            }
         }
     }
 }

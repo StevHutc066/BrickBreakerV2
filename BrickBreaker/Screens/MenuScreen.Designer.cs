@@ -107,6 +107,7 @@
             this.Controls.Add(this.exitLabel);
             this.Controls.Add(this.startLabel);
             this.Controls.Add(this.titleLabel);
+            this.DoubleBuffered = true;
             this.Name = "MenuScreen";
             this.Size = new System.Drawing.Size(800, 550);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.MenuScreen_PreviewKeyDown);

@@ -19,6 +19,7 @@ namespace BrickBreaker.Screens
         public InstructionScreen()
         {
             InitializeComponent();
+            this.DoubleBuffered = true;
         }
 
         private void InstructionScreen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -27,6 +28,10 @@ namespace BrickBreaker.Screens
 
             if (e.KeyCode == Keys.Escape)
             {
+                //play sound
+                Form1.pick.Stop();
+                Form1.pick.Play();
+
                 MenuScreen ms = new MenuScreen();
                 Form form = this.FindForm();
 
@@ -61,6 +66,10 @@ namespace BrickBreaker.Screens
                     switch (index)
                     {
                         case 0:
+                            //play sound
+                            Form1.select.Stop();
+                            Form1.select.Play();
+
                             GameScreen gs = new GameScreen();
                             Form form = this.FindForm();
 
@@ -70,6 +79,11 @@ namespace BrickBreaker.Screens
                             gs.Location = new Point((form.Width - gs.Width) / 2, (form.Height - gs.Height) / 2);
                             break;
                         case 1:
+
+                            //play sound
+                            Form1.select.Stop();
+                            Form1.select.Play();
+
                             //multiplayer screen but for now it is exit
                             GameScreenMulti gsm = new GameScreenMulti();
                             Form f = this.FindForm();

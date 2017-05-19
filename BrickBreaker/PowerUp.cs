@@ -91,8 +91,12 @@ namespace BrickBreaker
             System.Drawing.Rectangle rect1 = new System.Drawing.Rectangle(xCoord, yCoord, 20, 20);
             System.Drawing.Rectangle rect2 = new System.Drawing.Rectangle(paddle.x, paddle.y, paddle.width, paddle.height);
             
-            if (rect1.IntersectsWith(rect2))
+            if (rect1.IntersectsWith(rect2))  
             {
+                //Play powerup sound
+                Form1.powerUp.Stop(); 
+                Form1.powerUp.Play();
+
                 return true;
             }
             else

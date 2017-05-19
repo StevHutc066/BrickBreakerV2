@@ -17,6 +17,8 @@ namespace BrickBreaker
 
         int selected, lastSelected;
 
+        int index, lastIndex;
+
         public LoseScreenMulti()
         {
             InitializeComponent();
@@ -37,131 +39,84 @@ namespace BrickBreaker
 
         private void LoseScreenMulti_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            lastSelected = selected;
+            lastIndex = index;
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                MenuScreen ms = new MenuScreen();
+                Form form = this.FindForm();
+
+                form.Controls.Add(ms);
+                form.Controls.Remove(this);
+
+                ms.Location = new Point((form.Width - ms.Width) / 2, (form.Height - ms.Height) / 2);
+            }
 
             switch (e.KeyCode)
             {
-                case Keys.Left:
-                    leftArrowDown = true;
-                    break;
-                case Keys.Down:
-                    downArrowDown = true;
-                    break;
                 case Keys.Right:
-                    rightArrowDown = true;
+                    if (index != 0)
+                        index--;
+                    else
+                    {
+                        index = 1;
+                    }
                     break;
-                case Keys.Up:
-                    upArrowDown = true;
+                case Keys.Left:
+                    if (index != 1)
+                        index++;
+                    else
+                    {
+                        index = 0;
+                    }
                     break;
+
                 case Keys.Space:
-                    spaceDown = true;
-                    break;
-                case Keys.V:
-                    vDown = true;
-                    break;
-                case Keys.B:
-                    bDown = true;
-                    break;
-                case Keys.N:
-                    nDown = true;
-                    break;
-                default:
+                    switch (index)
+                    {
+                        case 0:
+                            Form f = this.FindForm();
+                            MenuScreen ms = new MenuScreen();
+
+                            ms.Location = new Point((f.Width - ms.Width) / 2, (f.Height - ms.Height) / 2);
+
+                            f.Controls.Add(ms);
+                            f.Controls.Remove(this);
+
+                            break;
+                        case 1:
+                            Form form = this.FindForm();
+                            GameScreenMulti gsm = new GameScreenMulti();
+
+                            gsm.Location = new Point((form.Width - gsm.Width) / 2, (form.Height - gsm.Height) / 2);
+
+                            form.Controls.Add(gsm);
+                            form.Controls.Remove(this);
+
+                            break;
+                    }
                     break;
             }
 
-            if (rightArrowDown == true)
-            {
-                if (selected == 2)
-                {
-                    selected = 1;
-                }
-                else
-                {
-                    selected++;
-                }
-            }
 
-            if (leftArrowDown == true)
+            switch (lastIndex)
             {
-                if (selected == 1)
-                {
-                    selected = 2;
-                }
-                else
-                {
-                    selected--;
-                }
-            }
-
-            switch (selected)
-            {
+                case 0:
+                    returnToMenuLabel.ForeColor = Color.White;
+                    break;
                 case 1:
                     playAgainLabel.ForeColor = Color.White;
-                    returnToMenuLabel.ForeColor = Color.Red;
-
-                    if (spaceDown == true)
-                    {
-                        // Goes to the game screen
-                        Form form = this.FindForm();
-                        GameScreenMulti gsm = new GameScreenMulti();
-
-                        gsm.Location = new Point((form.Width - gsm.Width) / 2, (form.Height - gsm.Height) / 2);
-
-                        form.Controls.Add(gsm);
-                        form.Controls.Remove(this);
-                    }
                     break;
 
-                case 2:
-                    returnToMenuLabel.ForeColor = Color.White;
-                    playAgainLabel.ForeColor = Color.Red;
-
-                    if (spaceDown == true)
-                    {
-                        // Goes to the main menu screen
-                        Form form = this.FindForm();
-                        MenuScreen ms = new MenuScreen();
-
-                        ms.Location = new Point((form.Width - ms.Width) / 2, (form.Height - ms.Height) / 2);
-
-                        form.Controls.Add(ms);
-                        form.Controls.Remove(this);
-                    }
-                    break;
             }
 
-        }
-
-
-        private void LoseScreenMulti_KeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
+            switch (index)
             {
-                case Keys.Left:
-                    leftArrowDown = false;
+                case 0:
+                    returnToMenuLabel.ForeColor = Color.Red;
                     break;
-                case Keys.Down:
-                    downArrowDown = false;
-                    break;
-                case Keys.Right:
-                    rightArrowDown = false;
-                    break;
-                case Keys.Up:
-                    upArrowDown = false;
-                    break;
-                case Keys.Space:
-                    spaceDown = false;
-                    break;
-                case Keys.V:
-                    vDown = false;
-                    break;
-                case Keys.B:
-                    bDown = false;
-                    break;
-                case Keys.N:
-                    nDown = false;
-                    break;
-                default:
+                case 1:
+                    playAgainLabel.ForeColor = Color.Red;
                     break;
             }
         }

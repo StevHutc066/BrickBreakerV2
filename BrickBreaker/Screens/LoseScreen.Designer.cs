@@ -116,7 +116,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.BackgroundImage = global::BrickBreaker.Properties.Resources.fadedBackground;
+            this.BackgroundImage = global::BrickBreaker.Properties.Resources.texture4;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.Controls.Add(this.scoreOutput);
             this.Controls.Add(this.playButton);
